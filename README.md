@@ -63,25 +63,89 @@ principal excluded so the totals mean what they say.
 
 ## Stack
 
-React 18 + TypeScript + Vite + Tailwind (frontend) · Node 20 + Fastify (backend) ·
-PostgreSQL 16 · Anthropic Claude API (server-side only) · Nginx + systemd (deploy).
+React 18 + TypeScript + Vite + Tailwind (frontend) · Node 20+ + Fastify (backend) ·
+PostgreSQL 16+ · Anthropic Claude API (server-side only) · Nginx + systemd (deploy).
 
-## Local development
+## Installation
+
+### Requirements
+
+- **Node.js 20 or newer** (developed on 20, verified on 24)
+- **PostgreSQL 16 or newer** (verified on 17)
+- For the server install: **Ubuntu Server 22.04 or 24.04 LTS**
+
+No Docker, no containers, no external services. The only outbound call the app
+ever makes is to the Anthropic API, and only if you turn the AI features on.
+
+### On a server (the intended way to run it)
+
+One command on a fresh Ubuntu box installs Node, PostgreSQL, Nginx, a locked-down
+`finance` system user, a systemd unit, HTTPS, and a nightly backup cron:
+
+```bash
+git clone https://github.com/LiamHammersley/AnotherFinanceApp.git
+```
+
+```bash
+sudo bash AnotherFinanceApp/docs/install.sh finance.yourdomain.com
+```
+
+The installer is idempotent — safe to re-run, and it never overwrites your
+`/etc/finance/.env` or a certbot-edited nginx site. Full detail, including the
+self-signed-to-real certificate swap and day-2 operations, is in
+[INSTALL.md](INSTALL.md).
+
+### On your own machine
+
+To try it locally, or to develop against it:
+
+```bash
+git clone https://github.com/LiamHammersley/AnotherFinanceApp.git
+```
+
+```bash
+cd AnotherFinanceApp && npm install
+```
 
 ```bash
 createdb finance
-cp .env.example .env            # set DATABASE_URL + SESSION_SECRET
-npm install
-npm run migrate                 # node-pg-migrate, SQL files in backend/migrations
-DATABASE_URL=postgresql:///finance npm run dev:backend
-npm run dev:frontend            # Vite on :5173, proxies /api to :3000
 ```
-
-First visit shows the one-time setup wizard (user, API key, accounts, optional import).
 
 ```bash
-npm test                        # backend CSV parser self-checks
+cp .env.example .env
 ```
+
+Set `DATABASE_URL` and `SESSION_SECRET` in `.env` — generate a secret with
+`openssl rand -hex 32`. Then create the schema and start both halves:
+
+```bash
+npm run migrate
+```
+
+```bash
+DATABASE_URL=postgresql:///finance npm run dev:backend
+```
+
+```bash
+npm run dev:frontend
+```
+
+The API listens on `:3000` (localhost only) and Vite serves the UI on `:5173`,
+proxying `/api` through to it. Open <http://localhost:5173>.
+
+The tests need no database — they cover the pure services (csv, vendor, search,
+dedupe, rules, budgets) and run directly under node:
+
+```bash
+npm test
+```
+
+### First run
+
+The first visit shows a one-time setup wizard: it creates your login (minimum
+10 characters), optionally stores an Anthropic API key, and sets up your accounts.
+After that you can import bank CSVs from the Import page, or load the
+[demo data](#demo-data) to look around first.
 
 ## Demo data
 
@@ -98,10 +162,11 @@ DATABASE_URL=postgresql:///finance_demo node seed-demo.mjs
 
 Then sign in as `demo` / `demo-password-2026`.
 
-## Production (Ubuntu Server, no containers)
+## Running it day to day
 
-See `docs/`: `nginx.conf`, `finance-api.service`, `deploy.sh`, `backup.sh`, `restore.md`.
-Secrets live in `/etc/finance/.env` (root-owned, mode 640, group `finance`).
+Once installed, the pieces live in `docs/`: `nginx.conf`, `finance-api.service`,
+`deploy.sh`, `backup.sh`, `restore.md`. Secrets live in `/etc/finance/.env`
+(root-owned, mode 640, group `finance`) — never in the repo.
 
 - Health: `GET /api/health`
 - Logs: `journalctl -u finance-api -f`

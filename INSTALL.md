@@ -6,9 +6,25 @@ default site).
 
 ## Quick install
 
+Either clone on the server, or build a package locally and copy it across. Both
+end at the same `install.sh` — it installs whatever directory it was run from.
+
+**From a clone** (simplest; also lets `docs/deploy.sh` update via `git pull` later):
+
 ```bash
-# On your Mac: build the package, then copy it to the server
-cd finance-app && npm run package     # → ../finance-app-<version>.tar.gz
+git clone https://github.com/LiamHammersley/AnotherFinanceApp.git
+sudo bash AnotherFinanceApp/docs/install.sh finance.yourdomain.com
+```
+
+The frontend is built on the server in this case, since a clone carries no
+`frontend/dist`.
+
+**From a release package** (no git or build toolchain needed on the server —
+the tarball ships a pre-built frontend):
+
+```bash
+# On your development machine
+npm run package                       # → ../finance-app-<version>.tar.gz
 scp finance-app-<version>.tar.gz you@your-server:
 
 # On the server
