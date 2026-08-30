@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #2563eb;
+}
+
+body {
+  @apply bg-[#f5f6f8] text-[#171b22] antialiased;
+}
+
+/* Bulk selection bar entry (Transactions redesign) */
+@keyframes popIn {
+  from { opacity: 0; transform: translate(-50%, 6px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+.animate-pop-in {
+  animation: popIn 0.18s ease-out;
+}
+
+/* Expanding analysis findings (Dashboard redesign) */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-down {
+  animation: slideDown 0.16s ease-out;
+}
+
+/* Scrollable strips (mobile nav) without a visible scrollbar */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Category group colour swatch: make <input type="color"> read as a dot */
+input[type="color"].swatch::-webkit-color-swatch-wrapper { padding: 0; }
+input[type="color"].swatch::-webkit-color-swatch { border: none; border-radius: 9999px; }

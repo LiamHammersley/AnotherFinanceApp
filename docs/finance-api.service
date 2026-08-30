@@ -1,0 +1,28 @@
+# /etc/systemd/system/finance-api.service
+# sudo systemctl daemon-reload && sudo systemctl enable --now finance-api
+[Unit]
+Description=Finance API (Fastify)
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=finance
+Group=finance
+WorkingDirectory=/opt/finance-app/backend
+EnvironmentFile=/etc/finance/.env
+# Migrations run before the server accepts connections
+ExecStartPre=/usr/bin/npm run migrate
+ExecStart=/usr/bin/node src/server.js
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+# Sandboxing — the service only needs its app dir, the pg socket and journald
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

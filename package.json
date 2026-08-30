@@ -1,0 +1,17 @@
+{
+  "name": "finance-app",
+  "private": true,
+  "version": "1.36.0",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:backend": "npm run dev --workspace backend",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "build": "npm run build --workspace frontend",
+    "migrate": "npm run migrate --workspace backend",
+    "test": "npm --workspace=backend run test && node frontend/src/lib/format.test.ts",
+    "package": "npm run build --workspace frontend && tar --exclude=node_modules --exclude=.env --exclude=updates --exclude=.DS_Store --exclude=.git --exclude=.gitignore --exclude=.gitattributes -czf ../finance-app-$npm_package_version.tar.gz -C .. finance-app && echo Package: ../finance-app-$npm_package_version.tar.gz"
+  }
+}

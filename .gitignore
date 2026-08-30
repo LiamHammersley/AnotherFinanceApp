@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Secrets and local config — never commit a real .env
+.env
+.env.*
+!.env.example
+
+# Release packages and in-app update staging
+*.tar.gz
+updates/
+
+# Local editor / agent config
+.claude/
+
+# Logs and OS cruft
+*.log
+.DS_Store
+._*
+Thumbs.db

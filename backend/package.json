@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "migrate": "node-pg-migrate up -m migrations --migration-file-language sql",
+    "unlock": "node src/cli/unlock.js",
+    "test": "node test/csv.test.js && node test/vendor.test.js && node test/search.test.js && node test/dedupe.test.js && node test/rules-engine.test.js && node test/budget.test.js && node test/budget-plan.test.js && node test/ai-thinking.test.js && node test/register.test.js && node test/networth.test.js && node test/routes-smoke.test.js",
+    "set-password": "node src/cli/set-password.js"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^10.0.0",
+    "@fastify/rate-limit": "^10.0.0",
+    "bcryptjs": "^2.4.3",
+    "fastify": "^5.0.0",
+    "node-pg-migrate": "^7.6.0",
+    "pg": "^8.12.0"
+  }
+}
