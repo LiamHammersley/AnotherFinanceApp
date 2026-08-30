@@ -8,6 +8,59 @@ analytics, and no outbound calls except the Anthropic API when you enable the
 optional AI features (which is server-side only — your API key never reaches the
 browser).
 
+## Screenshots
+
+Every figure below is generated demo data — invented merchants, invented employer,
+invented balances. Reproduce it with `node seed-demo.mjs` against a throwaway database
+(see [Demo data](#demo-data)).
+
+### Dashboard
+
+Net position for the month, per-account sparklines, what needs attention, and where
+the money actually went.
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+### Transactions
+
+Grouped by day with running net, the raw bank description kept under the cleaned-up
+payee, and inline categorisation.
+
+![Transactions](docs/screenshots/transactions.png)
+
+### Budgets
+
+Targets measured over their own period, with a shared pace notch marking how far
+through the month you are — so "spent 88%" reads against "96% of the month gone"
+rather than against nothing.
+
+![Budgets](docs/screenshots/budgets.png)
+
+### Net worth
+
+Accounts plus the things that aren't accounts — super, property, vehicles, private
+loans — valued over time, so a revaluation never rewrites history.
+
+![Net worth](docs/screenshots/networth.png)
+
+### Profit & loss
+
+Rolling 12 months or a financial year, by category, with transfers and mortgage
+principal excluded so the totals mean what they say.
+
+![Profit and loss](docs/screenshots/pnl.png)
+
+<details>
+<summary>More screens — accounts, recurring, rules</summary>
+
+![Accounts](docs/screenshots/accounts.png)
+
+![Recurring](docs/screenshots/recurring.png)
+
+![Rules](docs/screenshots/rules.png)
+
+</details>
+
 ## Stack
 
 React 18 + TypeScript + Vite + Tailwind (frontend) · Node 20 + Fastify (backend) ·
@@ -29,6 +82,21 @@ First visit shows the one-time setup wizard (user, API key, accounts, optional i
 ```bash
 npm test                        # backend CSV parser self-checks
 ```
+
+## Demo data
+
+`seed-demo.mjs` fills an empty database with twelve months of invented activity —
+four accounts, ~380 transactions, holdings, budgets, goals, recurring entries and
+rules. It's what the screenshots above show, and it's the fastest way to see whether
+the app is worth your time before importing anything real.
+
+It **truncates every table first**, so point it at a throwaway database only:
+
+```bash
+DATABASE_URL=postgresql:///finance_demo node seed-demo.mjs
+```
+
+Then sign in as `demo` / `demo-password-2026`.
 
 ## Production (Ubuntu Server, no containers)
 
